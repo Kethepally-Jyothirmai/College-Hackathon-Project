@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CineBook – Movie Ticket Booking</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f2f2f2;--card:#fff;--ink:#1f2533;--mut:#6b7280;--nav:#2b3148;--red:#f84464;--ok:#16a34a;--line:#e3e5ea;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12141c;--card:#1d212e;--ink:#eef0f5;--mut:#9aa1b2;--nav:#0d0f16;--line:#2e3344}}
+:root[data-theme="dark"]{--bg:#12141c;--card:#1d212e;--ink:#eef0f5;--mut:#9aa1b2;--nav:#0d0f16;--line:#2e3344}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',system-ui,sans-serif;line-height:1.45}
+.page{display:none;min-height:100vh}.page.on{display:block}
+button{font:inherit;cursor:pointer;border:0;border-radius:8px}button:focus-visible,input:focus-visible{outline:3px solid var(--red);outline-offset:2px}
+.btn{background:var(--red);color:#fff;padding:12px 22px;font-weight:700}.btn.ghost{background:transparent;color:var(--red);border:1.5px solid var(--red)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+nav{background:var(--nav);color:#fff;display:flex;align-items:center;gap:16px;padding:12px 20px;position:sticky;top:0;z-index:5}
+.logo{font-weight:800;font-size:22px;letter-spacing:-.5px}.logo b{color:var(--red)}
+nav .sp{flex:1}nav span{font-size:14px;opacity:.85}
+.wrap{max-width:1080px;margin:0 auto;padding:20px}
+/* login */
+#login{background:linear-gradient(135deg,#2b3148 0,#7b1e3a 60%,#f84464 130%);align-items:center;justify-content:center}
+#login.on{display:flex}
+.lbox{background:var(--card);border-radius:16px;padding:32px;width:min(400px,92vw)}
+.lbox h1{margin:0 0 4px;font-size:28px}.lbox p{margin:0 0 20px;color:var(--mut)}
+input{width:100%;padding:12px;margin-bottom:12px;border:1.5px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit}
+.lbox .btn{width:100%}.lbox .alt{margin-top:10px;width:100%}
+.err{color:var(--red);font-size:13px;min-height:18px;margin-bottom:6px}
+/* home */
+.hero{border-radius:14px;padding:34px;color:#fff;background:linear-gradient(120deg,#2b3148,#f84464);display:flex;gap:20px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.hero h2{margin:0 0 6px;font-size:clamp(22px,4vw,34px);max-width:540px;line-height:1.15}.hero p{margin:0 0 16px;opacity:.9;max-width:520px}
+.hero .btn{background:#fff;color:var(--red)}.hero .big{font-size:76px}
+h3{margin:28px 0 12px;font-size:20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:16px}
+.mv{background:var(--card);border-radius:10px;overflow:hidden;cursor:pointer;border:0;text-align:left;padding:0;color:inherit}
+.poster{aspect-ratio:2/3;display:flex;align-items:center;justify-content:center;font-size:58px;position:relative}
+.poster i{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.65);color:#fff;font-style:normal;font-size:12px;padding:5px 8px}
+.mv div.t{padding:8px 10px 10px;font-weight:600;font-size:14px}.mv small{display:block;color:var(--mut);font-weight:400}
+/* planner */
+.bar{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px}
+.day{background:var(--card);border:1.5px solid var(--line);padding:8px 14px;color:var(--ink);white-space:nowrap;text-align:center}
+.day.on{background:var(--red);border-color:var(--red);color:#fff}
+.panel{background:var(--card);border-radius:12px;padding:16px;margin:16px 0}
+.row{display:grid;grid-template-columns:44px 1fr auto;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+.row:last-child{border:0}.row .em{font-size:30px;text-align:center}.row b{font-size:15px}.row small{color:var(--mut);display:block}
+.row.sel{background:color-mix(in srgb,var(--ok) 12%,transparent);border-radius:8px;padding-left:8px;padding-right:8px}
+.row.bad{opacity:.4}
+.chip{background:var(--bg);border:1.5px solid var(--line);color:var(--ink);padding:8px 14px;font-weight:600;min-width:110px}
+.row.sel .chip{background:var(--ok);border-color:var(--ok);color:#fff}
+.tl{position:relative;height:34px;background:var(--bg);border-radius:8px;margin:6px 0 2px;overflow:hidden}
+.tl div{position:absolute;top:4px;bottom:4px;border-radius:5px;background:var(--ok);color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center;overflow:hidden;white-space:nowrap}
+.ticks{display:flex;justify-content:space-between;font-size:11px;color:var(--mut)}
+.stat{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+.stat strong{font-size:30px;color:var(--ok)}
+.foot{position:sticky;bottom:0;background:var(--card);border-top:1px solid var(--line);padding:12px 20px;display:flex;justify-content:space-between;align-items:center;gap:10px;padding-bottom:calc(12px + env(safe-area-inset-bottom,0px))}
+label.chk{display:flex;gap:8px;align-items:center;font-size:14px}label.chk input{width:auto;margin:0}
+.note{font-size:13px;color:var(--mut)}
+.qty{display:flex;align-items:center;gap:10px}.qty button{width:34px;height:34px;background:var(--bg);color:var(--ink);border:1.5px solid var(--line);font-size:18px}
+.tk{border:2px dashed var(--red);border-radius:12px;padding:14px;margin:12px 0;background:var(--card)}
+.tot{font-size:22px;font-weight:800;text-align:right;margin-top:10px}
+@media(max-width:560px){.row{grid-template-columns:36px 1fr}.row .chip{grid-column:1/-1}.hero .big{display:none}}
+
+.ctl{display:flex;gap:12px;flex-wrap:wrap;margin-top:10px;font-size:14px}.ctl label{display:flex;gap:6px;align-items:center}
+.ctl select{padding:6px;border-radius:6px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);font:inherit}
+.vb{position:relative;background:var(--bg);border-radius:10px;padding:12px;margin:10px 0;max-height:260px;overflow:auto;font-size:14px}
+.vr{display:flex;gap:8px;padding:6px 8px;border-radius:6px;border-left:4px solid transparent;transition:background .2s}
+.vr span{color:var(--mut);margin-left:auto}.vr em{font-style:normal;min-width:84px;text-align:right;font-weight:700}
+.vr.cur{background:color-mix(in srgb,var(--red) 18%,transparent);border-left-color:var(--red)}
+.vr.yes{border-left-color:var(--ok)}.vr.yes em{color:var(--ok)}.vr.no{opacity:.55}.vr.no em{color:var(--red)}
+.toast{position:fixed;left:50%;bottom:84px;transform:translateX(-50%);background:var(--nav);color:#fff;padding:10px 18px;border-radius:24px;z-index:40;font-size:14px;animation:pop .25s}
+@keyframes pop{from{opacity:0;transform:translate(-50%,10px)}}
+.scr{text-align:center;font-size:11px;color:var(--mut);border-top:4px solid var(--red);border-radius:50% 50% 0 0/12px;margin:10px auto 12px;padding-top:4px;max-width:340px}
+.seats{display:flex;flex-direction:column;gap:6px;align-items:center}.sr{display:flex;gap:6px;align-items:center}
+.sr i{width:16px;color:var(--mut);font-size:12px;font-style:normal}
+.st{width:34px;height:34px;background:var(--bg);border:1.5px solid var(--ok);color:var(--ink);font-size:12px;border-radius:6px 6px 3px 3px;transition:transform .12s}
+.st:hover:not(:disabled){transform:scale(1.12)}.st.on{background:var(--ok);color:#fff}.st.tk2{border-color:var(--line);opacity:.35;cursor:not-allowed}
+.qr{display:grid;grid-template-columns:repeat(9,1fr);width:72px;height:72px;border:3px solid var(--ink);padding:3px;border-radius:4px;flex:none}.qr b{display:block}
+.cf{position:fixed;top:-30px;font-size:24px;z-index:30;pointer-events:none;animation:fall 2.4s linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.cf{display:none}.toast{animation:none}}
+
+.cm{display:grid;grid-template-columns:130px 1fr 24px;gap:8px;align-items:center;font-size:13px;margin:4px 0}
+.cm div{height:10px;background:var(--bg);border-radius:5px;overflow:hidden}.cm i{display:block;height:100%;background:var(--red);border-radius:5px;transition:width .4s}.cm:last-child i{background:var(--ok)}
+.mod{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;z-index:50;padding:16px}.mod[hidden]{display:none}
+.mbox{background:var(--card);border-radius:14px;width:min(420px,100%);max-height:90vh;overflow-y:auto}
+</style></head><body>
+
+<!-- LOGIN -->
+<section id="login" class="page on">
+ <div class="lbox">
+  <div class="logo" style="color:var(--ink)">cine<b>book</b></div>
+  <h1>Welcome back</h1><p>Log in to book your next movie day.</p>
+  <input id="em" type="email" placeholder="Email" autocomplete="username" aria-label="Email">
+  <input id="pw" type="password" placeholder="Password (min 4 characters)" autocomplete="current-password" aria-label="Password">
+  <div class="err" id="err"></div>
+  <button class="btn" id="go">Log in</button>
+  <button class="btn ghost alt" id="guest">Continue as guest</button>
+</div></section>
+
+<!-- HOME -->
+<section id="home" class="page">
+ <nav><div class="logo">cine<b>book</b></div><div class="sp"></div><span id="who"></span><button class="btn ghost" style="padding:6px 14px;color:#fff;border-color:#fff" id="mb">My bookings</button><button class="btn ghost" style="padding:6px 14px;color:#fff;border-color:#fff" id="out1">Log out</button></nav>
+ <div class="wrap">
+  <div class="hero"><div><h2>Watch more movies in one day, with zero clashes.</h2><p>Pick a date and we’ll find the most complete shows you can fit in without any overlap.</p><button class="btn" id="plan1">Plan my movie day</button></div><div class="big">🎬</div></div>
+  <h3>Now showing</h3><input id="srch" placeholder="Search movies" aria-label="Search movies"><div class="bar" id="gen"></div><div style="height:12px"></div><div class="grid" id="mvgrid"></div>
+ </div>
+</section>
+
+<section id="hist" class="page"><nav><button class="btn ghost" style="padding:6px 12px;color:#fff;border-color:#fff" data-go="home">← Home</button><div class="logo">My bookings</div></nav><div class="wrap" id="hb"></div></section>
+<!-- PLANNER -->
+<section id="plan" class="page">
+ <nav><button class="btn ghost" style="padding:6px 12px;color:#fff;border-color:#fff" data-go="home">← Home</button><div class="logo">Movie day planner</div><div class="sp"></div><span id="who2"></span></nav>
+ <div class="wrap">
+  <div class="bar" id="days"></div>
+  <div class="panel"><div class="stat">
+    <div><div class="note">Movies you can watch</div><strong id="cnt">0</strong> <span class="note" id="span"></span></div>
+    <div><button class="btn" id="auto">⚡ Auto-pick maximum</button> <button class="btn ghost" id="clr">Clear</button></div></div>
+   <div class="note" id="favl" style="margin-top:8px"></div><label class="chk" style="margin-top:10px"><input type="checkbox" id="dist" checked> Don’t repeat the same movie</label>
+   <div class="bar" id="pre" style="margin-top:10px"></div><div class="ctl"><label>Free from <select id="wf"></select></label><label>until <select id="wt"></select></label><label>Gap between shows <select id="bf"><option value="0">None</option><option value="15">15 min</option><option value="30">30 min</option><option value="45">45 min</option></select></label></div>
+   <button class="btn ghost" id="vz" style="margin:10px 0">▶ Watch the algorithm think</button><div id="viz"></div>
+   <div class="tl" id="tl"></div><div class="ticks"><span>8 AM</span><span>12 PM</span><span>4 PM</span><span>8 PM</span><span>12 AM</span></div><div id="cmp"></div>
+  </div>
+  <div class="panel"><b>All shows today</b> <span class="note">– tap a time to add it. Clashing shows are greyed out.</span><div id="rows"></div></div>
+ </div>
+ <div class="foot"><div id="sum" class="note">No shows selected</div><button class="btn" id="book" disabled>Proceed to booking</button></div>
+</section>
+
+<!-- BOOKING -->
+<section id="bk" class="page">
+ <nav><button class="btn ghost" style="padding:6px 12px;color:#fff;border-color:#fff" data-go="plan">← Back</button><div class="logo">Book tickets</div></nav>
+ <div class="wrap"><div id="bkbody"></div></div>
+</section>
+
+<div id="mod" class="mod" hidden></div>
+<button id="thm" aria-label="Toggle dark mode" style="position:fixed;right:12px;bottom:76px;z-index:9;width:42px;height:42px;border-radius:50%;background:var(--card);color:var(--ink);border:1.5px solid var(--line)">🌓</button>
+<script>
+const $=s=>document.querySelector(s);
+const M=[{id:1,t:"Kalki Chronicles",g:"Sci-Fi · Action",d:150,e:"🚀",c:"#7b1e3a"},{id:2,t:"Chai & Chaos",g:"Comedy",d:125,e:"😂",c:"#b45309"},{id:3,t:"Midnight Express",g:"Thriller",d:110,e:"🚆",c:"#1e3a5f"},{id:4,t:"Pixel Pals",g:"Animation",d:95,e:"🐼",c:"#0f766e"},{id:5,t:"Rangoli Days",g:"Romance",d:135,e:"💕",c:"#9d174d"},{id:6,t:"Iron Fist 7",g:"Action",d:140,e:"🥊",c:"#3f3f46"}];
+const raw=[[1,"Galaxy Multiplex","09:00"],[1,"Starlight Cinemas","13:00"],[1,"Royal Screens","19:30"],[2,"Starlight Cinemas","09:30"],[2,"Royal Screens","12:00"],[2,"Galaxy Multiplex","16:30"],[3,"Royal Screens","10:00"],[3,"Galaxy Multiplex","12:00"],[3,"Starlight Cinemas","18:30"],[4,"Galaxy Multiplex","09:15"],[4,"Royal Screens","11:00"],[4,"Starlight Cinemas","13:00"],[4,"Galaxy Multiplex","15:00"],[5,"Starlight Cinemas","11:30"],[5,"Royal Screens","14:00"],[5,"Galaxy Multiplex","21:00"],[6,"Galaxy Multiplex","11:00"],[6,"Starlight Cinemas","16:00"],[6,"Royal Screens","20:00"]];
+const tm=h=>{const[a,b]=h.split(":");return +a*60+ +b};
+const fm=m=>{const h=Math.floor(m/60)%24,mm=String(m%60).padStart(2,"0");return `${(h%12)||12}:${mm} ${h<12?"AM":"PM"}`};
+const S=raw.map((r,i)=>{const mv=M.find(m=>m.id===r[0]);const s=tm(r[2]);return{id:i,mv,th:r[1],s,e:s+mv.d,p:r[2]>="18:00"?300:220}}).sort((a,b)=>a.s-b.s);
+let buf=0,wf=480,wt=1440;const ov=(a,b)=>a.s<b.e+buf&&b.s<a.e+buf;const AV=()=>S.filter(x=>x.s>=wf&&x.e<=wt);
+let fav=null,user="",sel=new Set(),dayIdx=0,seats={};
+const dates=[...Array(5)].map((_,i)=>new Date(2026,9,2+i));
+const dl=d=>d.toLocaleDateString("en-IN",{weekday:"short",day:"numeric",month:"short"});
+
+function go(id){document.querySelectorAll(".page").forEach(p=>p.classList.remove("on"));$("#"+id).classList.add("on");scrollTo(0,0);if(id==="plan")draw();if(id==="hist")histDraw();}
+document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>go(b.dataset.go));
+
+/* login (demo only: any email + 4+ char password) */
+function enter(n){user=n;$("#who").textContent=$("#who2").textContent="Hi, "+n;try{localStorage.setItem("cb_user",n)}catch(e){}go("home")}
+$("#go").onclick=()=>{const e=$("#em").value.trim(),p=$("#pw").value;
+ if(!/^\S+@\S+\.\S+$/.test(e))return $("#err").textContent="Enter a valid email address.";
+ if(p.length<4)return $("#err").textContent="Password needs at least 4 characters.";
+ $("#err").textContent="";enter(e.split("@")[0])};
+$("#guest").onclick=()=>enter("Guest");
+$("#out1").onclick=()=>{sel.clear();go("login")};
+$("#plan1").onclick=()=>go("plan");
+
+/* home */
+$("#mvgrid").innerHTML=M.map(m=>`<button class="mv" data-go="plan"><div class="poster" style="background:linear-gradient(160deg,${m.c},#111)">${m.e}<i>${m.d} min</i></div><div class="t">${m.t}<small>${m.g}</small></div></button>`).join("");
+document.querySelectorAll(".mv").forEach((b,i)=>b.onclick=()=>openM(i));
+
+/* greedy activity selection: sort by END time, keep every show that starts after the last chosen one ends */
+
+function draw(){
+ $("#days").innerHTML=dates.map((d,i)=>`<button class="day ${i===dayIdx?"on":""}" data-i="${i}">${dl(d)}</button>`).join("");
+ document.querySelectorAll("#days .day").forEach(b=>b.onclick=()=>{dayIdx=+b.dataset.i;sel.clear();draw()});
+ const chosen=S.filter(x=>sel.has(x.id));
+ $("#rows").innerHTML=AV().map(x=>{const on=sel.has(x.id),bad=!on&&chosen.some(c=>ov(c,x));
+  return `<div class="row ${on?"sel":""} ${bad?"bad":""}"><div class="em">${x.mv.e}</div><div><b>${x.mv.id===fav?"⭐ ":""}${x.mv.t}</b><small>${x.th} · ${x.mv.g}</small></div><button class="chip" data-id="${x.id}" ${bad?"disabled":""}>${on?"✓ ":""}${fm(x.s)} – ${fm(x.e)}<small style="color:inherit;opacity:.8">₹${x.p}</small></button></div>`}).join("");
+ document.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{const id=+b.dataset.id;sel.has(id)?sel.delete(id):sel.add(id);draw()});
+ $("#tl").innerHTML=chosen.map(x=>`<div title="${x.mv.t}" style="left:${(x.s-480)/9.6}%;width:${(x.e-x.s)/9.6}%">${x.mv.e} ${x.mv.t}</div>`).join("");
+ $("#cnt").textContent=chosen.length;$("#favl").innerHTML=fav?`⭐ Must-watch: <b>${M.find(m=>m.id===fav).t}</b> <button class="chip" id="unpin" style="min-width:0;padding:2px 8px">✕</button>`:"";if(fav)$("#unpin").onclick=()=>{fav=null;draw()};
+ const mx=best($("#dist").checked).length;
+ $("#span").textContent=chosen.length?`${fm(chosen[0].s)} → ${fm(chosen[chosen.length-1].e)} · best possible: ${mx}`:`best possible today: ${mx}`;
+ $("#sum").textContent=chosen.length?`${chosen.length} show(s) · from ₹${chosen.reduce((a,x)=>a+x.p,0)} per person`:"No shows selected";
+ $("#book").disabled=!chosen.length;cmpDraw();
+}
+$("#auto").onclick=()=>{sel=new Set(best($("#dist").checked));draw();toast(`⚡ ${sel.size} movies planned for your day`)};
+$("#clr").onclick=()=>{sel.clear();draw()};
+$("#dist").onchange=draw;
+
+/* greedy with optional must-watch: try every show of the pinned movie, greedy on the free time before and after it */
+function gr(L,lo,hi,seen,d){const o=[];let l=lo;[...L].sort((a,b)=>a.e-b.e||a.s-b.s).forEach(x=>{if(x.s>=l&&x.e<=hi&&!(d&&seen.has(x.mv.id))){o.push(x.id);seen.add(x.mv.id);l=x.e+buf}});return o}
+function best(d){const A=AV();if(fav){let w=[];const rest=A.filter(x=>x.mv.id!==fav);A.filter(x=>x.mv.id===fav).forEach(f=>{const sn=new Set([fav]);const r=[...gr(rest,-1e9,f.s-buf,sn,d),f.id,...gr(rest,f.e+buf,1e9,sn,d)];if(r.length>w.length)w=r});if(w.length)return w}return gr(A,-1e9,1e9,new Set(),d)}
+
+/* helpers */
+const sl=ms=>new Promise(r=>setTimeout(r,ms));
+function toast(t){const e=document.createElement("div");e.className="toast";e.setAttribute("role","status");e.textContent=t;document.body.appendChild(e);setTimeout(()=>e.remove(),2600)}
+function conf(){for(let i=0;i<36;i++){const e=document.createElement("span");e.className="cf";e.textContent=["🎉","🎬","🍿","⭐"][i%4];e.style.left=Math.random()*100+"vw";e.style.animationDelay=Math.random()*.8+"s";document.body.appendChild(e);setTimeout(()=>e.remove(),3300)}}
+const qr=t=>{let h=0;for(const c of t)h=(h*31+c.charCodeAt(0))>>>0;let o="";for(let i=0;i<81;i++){h=(h*1103515245+12345)>>>0;o+=`<b style="background:${(h>>16)&1?"var(--ink)":"transparent"}"></b>`}return `<div class="qr">${o}</div>`};
+$("#thm").onclick=()=>{const d=document.documentElement,dk=d.dataset.theme==="dark"||(!d.dataset.theme&&matchMedia("(prefers-color-scheme:dark)").matches);d.dataset.theme=dk?"light":"dark"};
+
+/* home: genre filter */
+const G=["All",...new Set(M.flatMap(m=>m.g.split(" · ")))];
+$("#gen").innerHTML=G.map((g,i)=>`<button class="day ${i?"":"on"}" data-g="${g}">${g}</button>`).join("");
+let gsel="All";const filt=()=>{const q=$("#srch").value.toLowerCase();document.querySelectorAll(".mv").forEach((c,i)=>c.style.display=(gsel==="All"||M[i].g.includes(gsel))&&M[i].t.toLowerCase().includes(q)?"":"none")};document.querySelectorAll("#gen .day").forEach(b=>b.onclick=()=>{gsel=b.dataset.g;document.querySelectorAll("#gen .day").forEach(c=>c.classList.toggle("on",c===b));filt()});$("#srch").oninput=filt;
+
+/* planner: free-time window + gap */
+const hs=[...Array(17)].map((_,i)=>8+i);
+$("#wf").innerHTML=hs.slice(0,16).map(h=>`<option value="${h*60}">${fm(h*60)}</option>`).join("");
+$("#wt").innerHTML=hs.slice(1).map(h=>`<option value="${h*60}">${fm(h*60)}</option>`).join("");$("#wt").value=1440;
+$("#wf").onchange=()=>{wf=+$("#wf").value;sel.clear();draw()};
+$("#wt").onchange=()=>{wt=+$("#wt").value;sel.clear();draw()};
+$("#bf").onchange=()=>{buf=+$("#bf").value;sel.clear();draw()};
+
+/* animated walkthrough of the greedy algorithm */
+let vzRun=0;
+$("#vz").onclick=async()=>{const id=++vzRun,d=$("#dist").checked,A=[...AV()].sort((a,b)=>a.e-b.e||a.s-b.s);let last=-1e9;const seen=new Set();let k=0;sel.clear();draw();
+ $("#viz").innerHTML=`<div class="vb" id="vbx"><b>Sorted by end time.</b> Keep a show only if it starts after the last kept show ends${buf?" (+"+buf+" min gap)":""}.<div id="vl" class="note">Last kept show ends: —</div>`+A.map(x=>`<div class="vr" id="v${x.id}">${x.mv.e} ${x.mv.t}<span>${fm(x.s)}–${fm(x.e)}</span><em></em></div>`).join("")+`</div>`;
+ for(const x of A){if(id!==vzRun)return;const r=$("#v"+x.id);r.classList.add("cur");$("#vbx").scrollTop=r.offsetTop-90;await sl(650);
+  const okT=x.s>=last+buf,okM=!(d&&seen.has(x.mv.id));
+  if(okT&&okM){k++;seen.add(x.mv.id);last=x.e;sel.add(x.id);draw();r.classList.add("yes");r.querySelector("em").textContent="✓ kept";$("#vl").textContent="Last kept show ends: "+fm(last)}
+  else{r.classList.add("no");r.querySelector("em").textContent=okT?"✗ repeat movie":"✗ overlaps"}
+  r.classList.remove("cur")}
+ toast(`Done! ${k} movies fit in your day`)};
+
+/* booking with seat map */
+const R="ABCDE",C=8,taken=(id,r,c)=>(id*7+r*13+c*5+r*c)%5===0;
+$("#book").onclick=()=>{[...sel].forEach(id=>seats[id]=seats[id]||new Set());go("bk");bk()};
+function bk(){const ch=S.filter(x=>sel.has(x.id));let tot=0,n=0;ch.forEach(x=>{tot+=x.p*seats[x.id].size;n+=seats[x.id].size});tot+=snackTotal();const disc=promo?Math.round(tot*.2):0;tot-=disc;const miss=ch.some(x=>!seats[x.id].size);
+ $("#bkbody").innerHTML=daySum(ch)+`<p class="note">Tap seats for each show (max 6). Faded seats are taken. Your shows are already clash-free ✔</p>`+
+ ch.map(x=>`<div class="panel"><div class="stat"><div><b>${x.mv.e} ${x.mv.t}</b><small class="note" style="display:block">${x.th} · ${fm(x.s)} – ${fm(x.e)} · ₹${x.p}/seat</small></div><b>${seats[x.id].size} seat(s)</b></div><div class="scr">SCREEN</div><div class="seats">`+
+  [...R].map((L,r)=>`<div class="sr"><i>${L}</i>`+[...Array(C)].map((_,c)=>{const k=L+(c+1),t=taken(x.id,r,c);return `<button class="st ${t?"tk2":""} ${seats[x.id].has(k)?"on":""}" data-id="${x.id}" data-k="${k}" ${t?"disabled":""} aria-label="Seat ${k}">${c+1}</button>`}).join("")+`</div>`).join("")+`</div></div>`).join("")+
+ `${snackUI()}<div class="tot">${disc?"<small>Promo −₹"+disc+"</small><br>":""}${n} seat(s) · ₹${tot}</div><button class="btn" id="pay" style="width:100%" ${miss?"disabled":""}>${miss?"Pick at least one seat per show":"Pay ₹"+tot+" &amp; confirm"}</button>`;
+ document.querySelectorAll(".st").forEach(b=>b.onclick=()=>{const q=seats[+b.dataset.id],k=b.dataset.k,y=scrollY;q.has(k)?q.delete(k):(q.size<6&&q.add(k));bk();scrollTo(0,y)});
+ document.querySelectorAll("[data-sk]").forEach(b=>b.onclick=()=>{const k=b.dataset.sk,y=scrollY;snk[k]=Math.min(10,Math.max(0,snk[k]+ +b.dataset.d));bk();scrollTo(0,y)});
+ $("#pa").onclick=()=>{if($("#pc").value.trim().toUpperCase()==="HACK20"){promo=true;toast("Promo applied: 20% off")}else{promo=false;toast("Invalid promo code")}bk()};
+ $("#cp").onclick=()=>copyIt(ch);
+ $("#pay").onclick=()=>{const ref="CB"+Math.random().toString(36).slice(2,8).toUpperCase();conf();hist.unshift({ref,day:dl(dates[dayIdx]),tot,list:ch.map(x=>x.mv.e+" "+x.mv.t+" · "+fm(x.s)+" · "+[...seats[x.id]].sort().join(", "))});saveH();
+  $("#bkbody").innerHTML=`<div class="panel"><h2 style="margin:0">🎉 Booking confirmed</h2><p class="note">Booking ID <b>${ref}</b> · ${user} · ${dl(dates[dayIdx])}</p>`+
+  ch.map(x=>`<div class="tk" style="display:flex;justify-content:space-between;gap:10px;align-items:center"><div><b>${x.mv.e} ${x.mv.t}</b><br>${x.th} · ${fm(x.s)} – ${fm(x.e)}<br>Seats: <b>${[...seats[x.id]].sort().join(", ")}</b> · ₹${x.p*seats[x.id].size}</div>${qr(ref+x.id)}</div>`).join("")+
+  `${snackTotal()?`<p class="note">Includes: ${SN.filter(([k])=>snk[k]).map(([k,nm])=>snk[k]+"× "+nm).join(", ")}</p>`:""}<div class="tot">Paid ₹${tot}</div><button class="btn" style="width:100%;margin-top:12px" id="done">Back to home</button></div>`;
+  $("#done").onclick=()=>{sel.clear();seats={};snk={pop:0,cof:0};promo=false;go("home")}};
+}
+
+/* movie details */
+const INFO={1:["8.6","In 2898, a reluctant warrior must unite two warring worlds before time runs out."],2:["7.9","Two rival tea-stall owners are forced to share one shop after the monsoon floods their street."],3:["8.1","Seven strangers, one overnight train, and a passenger nobody remembers boarding."],4:["8.4","A pixel-art panda and her robot friends race to save their arcade town from a blackout."],5:["7.6","Two wedding choreographers fall for each other while planning the year's biggest festival."],6:["7.8","A retired boxer steps back into the ring for one last fight to save his old gym."]};
+document.querySelectorAll(".mv small").forEach((e,i)=>e.insertAdjacentHTML("beforeend"," · ★ "+INFO[M[i].id][0]));
+function openM(i){const m=M[i],f=INFO[m.id],o=$("#mod"),t=S.filter(x=>x.mv.id===m.id).map(x=>fm(x.s)).join(" · ");o.hidden=false;
+ o.innerHTML=`<div class="mbox" role="dialog" aria-label="${m.t}"><div class="poster" style="background:linear-gradient(160deg,${m.c},#111);aspect-ratio:auto;height:120px">${m.e}</div><div style="padding:16px"><h2 style="margin:0">${m.t}</h2><p class="note">${m.g} · ${m.d} min · ★ ${f[0]}/10</p><p>${f[1]}</p><p class="note">Showing today: ${t}</p><button class="btn" id="mpin" style="width:100%">⭐ Make it my must-watch &amp; plan my day</button><button class="btn ghost" id="mx" style="width:100%;margin-top:8px">Close</button></div></div>`;
+ $("#mx").onclick=()=>o.hidden=true;$("#mpin").onclick=()=>{fav=m.id;o.hidden=true;toast("⭐ "+m.t+" is now your must-watch");go("plan")};o.onclick=e=>{if(e.target===o)o.hidden=true}}
+document.addEventListener("keydown",e=>{if(e.key==="Escape")$("#mod").hidden=true});
+
+/* planner presets */
+const PR=[["⚡ Max movies",480,1440,0],["😌 Relaxed day",600,1320,30],["🌙 Night owl",1080,1440,0]];
+$("#pre").innerHTML=PR.map((p,i)=>`<button class="day" data-p="${i}">${p[0]}</button>`).join("");
+document.querySelectorAll("[data-p]").forEach(b=>b.onclick=()=>{const p=PR[+b.dataset.p];wf=p[1];wt=p[2];buf=p[3];$("#wf").value=wf;$("#wt").value=wt;$("#bf").value=buf;sel=new Set(best($("#dist").checked));draw();toast(`${p[0]}: ${sel.size} movies`)});
+
+/* strategy comparison */
+function cmpDraw(){const A=AV(),d=$("#dist").checked;
+ const pick=L=>{const o=[];let l=-1e9;L.forEach(x=>{if(x.s>=l&&!(d&&o.some(y=>y.mv.id===x.mv.id))){o.push(x);l=x.e+buf}});return o.length};
+ const a=pick([...A].sort((p,q)=>p.s-q.s)),b=pick([...A].sort((p,q)=>p.mv.d-q.mv.d||p.s-q.s)),g=gr(A,-1e9,1e9,new Set(),d).length,mx=Math.max(a,b,g,1);
+ $("#cmp").innerHTML=`<div class="note" style="margin-top:12px"><b>Why earliest-finish wins</b> – same shows, three strategies:</div>`+[["Earliest start first",a],["Shortest movie first",b],["Earliest finish first ✓",g]].map(([nm,v])=>`<div class="cm"><span>${nm}</span><div><i style="width:${v/mx*100}%"></i></div><b>${v}</b></div>`).join("")}
+
+/* snacks, promo, day summary, copy */
+let snk={pop:0,cof:0},promo=false;const SN=[["pop","🍿 Popcorn",150],["cof","☕ Cold coffee",120]];
+const snackTotal=()=>SN.reduce((a,[k,,p])=>a+snk[k]*p,0);
+const snackUI=()=>`<div class="panel"><b>Add snacks</b>`+SN.map(([k,nm,p])=>`<div class="stat" style="margin-top:8px"><span>${nm} <span class="note">₹${p}</span></span><div class="qty"><button data-sk="${k}" data-d="-1" aria-label="Less ${nm}">−</button><b>${snk[k]}</b><button data-sk="${k}" data-d="1" aria-label="More ${nm}">+</button></div></div>`).join("")+`<div class="stat" style="margin-top:12px"><input id="pc" placeholder="Promo code (try HACK20)" aria-label="Promo code" value="${promo?"HACK20":""}" style="max-width:230px;margin:0"><button class="btn ghost" id="pa">Apply</button></div></div>`;
+function daySum(ch){if(!ch.length)return"";const mins=ch.reduce((a,x)=>a+x.mv.d,0),span=ch[ch.length-1].e-ch[0].s;
+ return `<div class="panel"><div class="stat"><div><b>Your day plan</b><div class="note">${fm(ch[0].s)} → ${fm(ch[ch.length-1].e)}</div></div><div class="note" style="text-align:right">🎞 ${(mins/60).toFixed(1)} h of movies<br>⏳ ${((span-mins)/60).toFixed(1)} h of breaks</div></div><button class="btn ghost" id="cp" style="margin-top:10px">📋 Copy itinerary</button></div>`}
+function copyIt(ch){const t=`My movie day – ${dl(dates[dayIdx])}\n`+ch.map(x=>`${fm(x.s)}–${fm(x.e)}  ${x.mv.t} @ ${x.th}`).join("\n");try{navigator.clipboard.writeText(t).then(()=>toast("Itinerary copied")).catch(()=>toast("Copy blocked by the browser"))}catch(e){toast("Copy blocked by the browser")}}
+
+/* my bookings */
+let hist=[];try{hist=JSON.parse(localStorage.getItem("cb_h")||"[]")}catch(e){}
+const saveH=()=>{try{localStorage.setItem("cb_h",JSON.stringify(hist.slice(0,20)))}catch(e){}};
+function histDraw(){$("#hb").innerHTML=hist.length?hist.map(h=>`<div class="tk"><b>${h.ref}</b> · ${h.day}<br>${h.list.join("<br>")}<div class="tot" style="text-align:left">₹${h.tot}</div></div>`).join(""):`<div class="panel"><b>No bookings yet</b><p class="note">Plan a movie day and your tickets will show up here.</p><button class="btn" id="hp">Plan my movie day</button></div>`;
+ const b=$("#hp");if(b)b.onclick=()=>go("plan")}
+$("#mb").onclick=()=>go("hist");
+</script></body></html>
